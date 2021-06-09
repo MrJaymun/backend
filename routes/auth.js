@@ -14,7 +14,10 @@ const generateAccessToken = (id, role) =>{
     const payload = {
         id, role
     }
-    return jwt.sign(payload, secret, {expiresIn: "12h"})
+
+    const a = jwt.sign(payload, secret, {expiresIn: "12h"})
+
+    return a;
 }
 
 router.post('/',async function(req, res, next) {
@@ -25,7 +28,8 @@ router.post('/',async function(req, res, next) {
             if(resultAuth.count === '1'){
 
                 const token = generateAccessToken(resultAuth.login, resultAuth.user_category_id)
-                return res.status(201).json({token, user_category_id: resultAuth.user_category_id, status: "1"})
+
+                return res.status(201).json({token, status: "1", level: resultAuth.user_category_id})
             }
         }
 
@@ -34,7 +38,7 @@ router.post('/',async function(req, res, next) {
         }
 
     }).catch((error)=> {
-        return res.status(503).json({message: "Соединение с БД потеряно"})
+        return res.status(201).json({message: "Соединение с БД потеряно"})
 
     })
 

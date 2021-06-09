@@ -8,22 +8,31 @@ module.exports = function (role){
         }
 
         try{
-            const token = req.headers.authorization.split(' ')[1]
+
+            const token = req.headers.access.split(' ')[1]
             if(!token){
-                return res.status(403).json({message: "Не авторизован"});
+                return res.status(201).json({status: "2", message: "Нет токена"});
             }
-            const {roles: userRole} = jwt.verify(token, secret)
+            console.log(token)
+            const a= jwt.verify(token, secret)
+            console.log(a);
+
+
+
+            const {role: userRole} = jwt.verify(token, secret)
             let hasRole = false
+
             if(userRole >= role){
                 hasRole = true
             }
             if(!hasRole){
-                return res.status(403).json({message: "Нет доступа"});
+                return res.status(201).json({ status: "2", message: "Нет доступа"});
             }
             next()
         }
         catch (e){
-            return res.status(403).json({message: "Ошибка"});
+            console.log(e)
+            return res.status(201).json({status: "2", message: "Вылезла ошибка"});
         }
     }
 }

@@ -33,7 +33,7 @@ router.post('/complete', async function(req, res, next) {
     ).then(result=>{
         return res.status(201).json({status: "1"})
     }).catch((error)=> {
-        return res.status(503).json({message: "Соединение с БД потеряно"})
+        return res.status(201).json({message: "Соединение с БД потеряно"})
     })
 
 

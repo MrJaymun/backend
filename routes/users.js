@@ -33,7 +33,7 @@ router.post('/add',async function(req, res, next) {
   User.create(req.body).then(result=>{
     res.status(201).json({message: "Пользователь успешно добавлен"})
   }).catch((error)=> {
-    console.log(error)
+
     res.status(500).json({message: "error"})
 
   })

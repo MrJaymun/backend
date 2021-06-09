@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var regRouter = require('./routes/register');
+var mainRouter = require('./routes/main')
 
 var dataBase = require('./database');
 var User = dataBase.user;
@@ -31,6 +32,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/register', regRouter);
+app.use('/main', mainRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
