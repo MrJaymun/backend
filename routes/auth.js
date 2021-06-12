@@ -15,7 +15,7 @@ const generateAccessToken = (id, role) =>{
         id, role
     }
 
-    const a = jwt.sign(payload, secret, {expiresIn: "12h"})
+    const a = jwt.sign(payload, secret)
 
     return a;
 }

@@ -9,10 +9,10 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var regRouter = require('./routes/register');
 var mainRouter = require('./routes/main')
+var testCreateRouter = require('./routes/createTest')
 
 var dataBase = require('./database');
-var User = dataBase.user;
-var User_Category = dataBase.user_category;
+
 
 const cors = require('cors');
 var app = express();
@@ -33,6 +33,7 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/register', regRouter);
 app.use('/main', mainRouter);
+app.use('/addTest', testCreateRouter)
 
 
 // catch 404 and forward to error handler

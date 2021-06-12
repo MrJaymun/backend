@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const dataBase = require('../database');
 const {QueryTypes} = require("sequelize");
-const middleWare = require('../middleware/roleMiddleWare')
+
 const jwt = require('jsonwebtoken')
 const {secret} = require('../routes/secretKey')
 

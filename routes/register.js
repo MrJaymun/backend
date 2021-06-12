@@ -29,6 +29,7 @@ router.post('/', async function(req, res, next) {
 
 
 router.post('/complete', async function(req, res, next) {
+
     await dataBase.sequelize.query(`INSERT INTO USERS VALUES(\'${req.body.login}\', \'${req.body.password}\', \'${req.body.email}\', \'${req.body.user_category_id}\')`
     ).then(result=>{
         return res.status(201).json({status: "1"})
