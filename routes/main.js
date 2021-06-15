@@ -23,6 +23,19 @@ router.post('/first-level', async function(req, res, next) {
 
 });
 
+router.post('/second-level', async function(req, res, next) {
+    const token = req.headers.access.split(' ')[1]
+    const {role: userRole} = jwt.verify(token, secret)
+    if(userRole > 2){
+        return res.status(201).json({status: "1", result: true})
+    }
+    else{
+        return res.status(201).json({status: "1", result: false})
+    }
+
+});
+
+
 
 
 
