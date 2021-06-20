@@ -12,6 +12,7 @@ var mainRouter = require('./routes/main');
 var testCreateRouter = require('./routes/createTest');
 var personalRouter = require('./routes/personal');
 var dashboardRouter = require('./routes/dashboard');
+var ratingRouter = require('./routes/rating');
 
 var dataBase = require('./database');
 
@@ -38,6 +39,7 @@ app.use('/main', mainRouter);
 app.use('/addTest', testCreateRouter);
 app.use('/personal', personalRouter);
 app.use('/dashboard', dashboardRouter)
+app.use('/rating', ratingRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
