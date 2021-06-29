@@ -9,9 +9,13 @@ const {secret} = require('./secretKey');
 router.post('/allInfo', async function(req, res, next) {
 
     const token = req.headers.access.split(' ')[1]
-    const {id: id} = jwt.verify(token, secret)
-    await dataBase.sequelize.query(
-        `
+    if(!token){
+        return res.status(201).json({status: "2"})
+    }
+    else{
+        const {id: id} = jwt.verify(token, secret)
+        await dataBase.sequelize.query(
+            `
         SELECT ROW_NUMBER() over(), E.*
         FROM
         (
@@ -29,8 +33,8 @@ router.post('/allInfo', async function(req, res, next) {
         LIMIT 10
         ) E
 `).then(async percentsAll =>{
-        await dataBase.sequelize.query(
-            ` 
+            await dataBase.sequelize.query(
+                ` 
             SELECT F.* FROM
             (
             SELECT ROW_NUMBER() over(), E.*
@@ -51,9 +55,9 @@ router.post('/allInfo', async function(req, res, next) {
             ) F
             WHERE F.USER_ID = \'${id}\'
             `
-        ).then(async percentsOnly =>{
-            await dataBase.sequelize.query(
-                ` 
+            ).then(async percentsOnly =>{
+                await dataBase.sequelize.query(
+                    ` 
                 SELECT ROW_NUMBER() over(), E.*
                 FROM(
                 SELECT D.USER_ID, SUM(D.CORRECT_ANSWER_COUNT), SUM(D.COUNTER) AS ALL
@@ -70,9 +74,9 @@ router.post('/allInfo', async function(req, res, next) {
                 LIMIT 10
                 ) E
                 `
-            ).then(async summaryAll =>{
-                await dataBase.sequelize.query(
-                    `
+                ).then(async summaryAll =>{
+                    await dataBase.sequelize.query(
+                        `
                     SELECT F.*
                     FROM
                     (
@@ -93,15 +97,15 @@ router.post('/allInfo', async function(req, res, next) {
                     ) F
                     WHERE F.USER_ID = \'${id}\'
                     `
-                ).then( summaryOnly =>{
-                    return res.status(201).json({status: "1", percentsAll: percentsAll[0], percentsOnly: percentsOnly[0], summaryAll: summaryAll[0], summaryOnly: summaryOnly[0]})
+                    ).then( summaryOnly =>{
+                        return res.status(201).json({status: "1", percentsAll: percentsAll[0], percentsOnly: percentsOnly[0], summaryAll: summaryAll[0], summaryOnly: summaryOnly[0]})
+                    })
                 })
-            })
+            }) }).catch((error)=> {
+            return res.status(201).json({status: "2"})
         })
+    }
 
-    }).catch((error)=> {
-        return res.status(201).json({status: "2"})
-    })
 });
 
 

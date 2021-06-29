@@ -49,7 +49,7 @@ router.get('/try', async function(req, res, next) {
   await dataBase.sequelize.query('SELECT COUNT(*) FROM user_categories where user_category_id =3').then(result=>{
     res.status(201).json(result[1].rows)
   }).catch((error)=> {
-    console.log(error)
+
     res.status(500).json({message: "error"})
 
   })
@@ -61,7 +61,7 @@ router.get('/empty', async function(req, res, next) {
    await dataBase.sequelize.query('SELECT * FROM user_categories where user_category_id =4').then(result=>{
     res.status(201).json(result[1])
   }).catch((error)=> {
-    console.log(error)
+
     res.status(500).json({message: "error"})
 
   })
@@ -69,26 +69,7 @@ router.get('/empty', async function(req, res, next) {
 
 });
 
-/*
-router.get('/auth', async function(req, res, next) {
-  try{
-    const {login, password} = req.body;
-    const user = await  User.findOne({login})
-    if(!user){
-      return res.status(400).json({message: 'Not found'})
-    }
-    if(password != user.password){
-      return res.status(400).json({message: 'Wrong password'})
-    }
-    const token  = generateAccessToken(user.)
-  }
-  catch (e){
-    res.status(400).json({message: 'Login error'});
-  }
 
-
-});
-*/
 
 
 module.exports = router;

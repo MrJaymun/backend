@@ -12,27 +12,38 @@ const {secret} = require('../routes/secretKey')
 
 
 router.post('/first-level', async function(req, res, next) {
-        const token = req.headers.access.split(' ')[1]
-        const {role: userRole} = jwt.verify(token, secret)
+        const token = req.headers.access?.split(' ')[1]
+        if(!token){
+            return res.status(201).json({status: "1", result: false})
+        }
+        else{
+            const {role: userRole} = jwt.verify(token, secret)
             if(userRole > 1){
                 return res.status(201).json({status: "1", result: true})
             }
             else{
                 return res.status(201).json({status: "1", result: false})
             }
+        }
 
 });
 
 router.post('/second-level', async function(req, res, next) {
 
-    const token = req.headers.access.split(' ')[1]
-    const {role: userRole} = jwt.verify(token, secret)
-    if(userRole > 2){
-        return res.status(201).json({status: "1", result: true})
-    }
-    else{
+    const token = req.headers.access?.split(' ')[1]
+    if(!token){
         return res.status(201).json({status: "1", result: false})
     }
+    else{
+        const {role: userRole} = jwt.verify(token, secret)
+        if(userRole > 2){
+            return res.status(201).json({status: "1", result: true})
+        }
+        else{
+            return res.status(201).json({status: "1", result: false})
+        }
+    }
+
 
 
 });
@@ -48,7 +59,6 @@ router.post('/testToPass', async function(req, res, next) {
         WHERE A.TEST_STATUS_ID = 2
         GROUP BY A.TEST_ID, A.TEST_CATEGORY_ID, B.TEST_CATEGORY_NAME, A.TEST_NAME`
     ).then(result=>{
-        console.log(result[0])
         return res.status(201).json({status: "1", result: result[0]})
     }).catch((error)=> {
         return res.status(201).json({status: "2"})
@@ -67,7 +77,6 @@ router.post('/questionsToPass', async function(req, res, next) {
         ORDER BY A.POSITION ) C
         GROUP BY c.question_id, c.question_text, c.position`
     ).then(result=>{
-
         return res.status(201).json({status: "1", result: result[0]})
     }).catch((error)=> {
         return res.status(201).json({status: "2"})
@@ -77,20 +86,25 @@ router.post('/questionsToPass', async function(req, res, next) {
 });
 
 router.post('/sendTest', async function(req, res, next) {
-    console.log(req.body)
     const token = req.headers.access.split(' ')[1]
-    const {id: id} = jwt.verify(token, secret)
-    await dataBase.sequelize.query(`SELECT COUNT(*) AS COUNTER FROM ANSWERS WHERE IS_CORRECT = TRUE AND ANSWER_ID IN (${req.body.items})`
-    ).then(async result=>{
-        console.log(result[0][0].counter)
-        await dataBase.sequelize.query(`INSERT INTO TEST_PASSINGS VALUES(DEFAULT, ${req.body.id}, \'${id}\', ${result[0][0].counter}, null )`
-        ).then(finish=>{
-            return res.status(201).json({status: "1", result: result[0]})
-        })
-
-    }).catch((error)=> {
+    if(!token){
         return res.status(201).json({status: "2"})
-    })
+    }
+    else{
+        const {id: id} = jwt.verify(token, secret)
+        await dataBase.sequelize.query(`SELECT COUNT(*) AS COUNTER FROM ANSWERS WHERE IS_CORRECT = TRUE AND ANSWER_ID IN (${req.body.items})`
+        ).then(async result=>{
+
+            await dataBase.sequelize.query(`INSERT INTO TEST_PASSINGS VALUES(DEFAULT, ${req.body.id}, \'${id}\', ${result[0][0].counter}, null )`
+            ).then(finish=>{
+                return res.status(201).json({status: "1", result: result[0]})
+            })
+
+        }).catch((error)=> {
+            return res.status(201).json({status: "2"})
+        })
+    }
+
 
 
 });

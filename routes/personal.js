@@ -10,8 +10,14 @@ const {secret} = require('./secretKey');
 
 router.post('/loginInfo', async function(req, res, next) {
     const token = req.headers.access.split(' ')[1]
-    const {id: id} = jwt.verify(token, secret)
-    return res.status(201).json({status: "1", result: id})
+    if(!token){
+        return res.status(201).json({status: "2"})
+    }
+    else{
+        const {id: id} = jwt.verify(token, secret)
+        return res.status(201).json({status: "1", result: id})
+    }
+
 });
 
 router.post('/createCount', async function(req, res, next) {
@@ -63,7 +69,6 @@ router.post('/testList', async function(req, res, next) {
 
         return res.status(201).json({ status: "1", result: result[0]})
     }).catch((error)=> {
-        console.log(error)
         return res.status(201).json({status: "2"})
 
     })
@@ -79,7 +84,6 @@ WHERE TEST_ID = \'${req.body.id}\'
 ORDER BY A.POSITION ) C
 GROUP BY c.question_id, c.question_text, c.position`
     ).then(result=>{
-
         return res.status(201).json({status: "1", result: result[0]})
     }).catch((error)=> {
         return res.status(201).json({status: "2"})
@@ -130,7 +134,6 @@ router.post('/deleteTest', async function(req, res, next) {
             })
         })
     }).catch((error)=> {
-        console.log(error)
         return res.status(201).json({status: "2"})
         })
 

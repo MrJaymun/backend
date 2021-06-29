@@ -11,7 +11,7 @@ const sequelize = new Sequelize("coursework", "postgres", "12345", {
 /*
 
 sequelize.sync({force: true}).then(()=> {
-    console.log("Ура");
+    console.log("Успешно");
 })
 */
 

@@ -32,15 +32,19 @@ router.post('/check', async function(req, res, next) {
 
 router.post('/registerTest', async function(req, res, next) {
     const token = req.headers.access.split(' ')[1]
-    const {id: userName} = jwt.verify(token, secret)
-    await dataBase.sequelize.query(`INSERT INTO TESTS VALUES (DEFAULT, ${req.body.category}, \'${userName}\', \'${req.body.test_name}\', 1)`
-    ).then(result=>{
-        return res.status(201).json({status: "1"})
-    }).catch((error)=> {
+    if(!token){
         return res.status(201).json({status: "2"})
+    }
+    else{
+        const {id: userName} = jwt.verify(token, secret)
+        await dataBase.sequelize.query(`INSERT INTO TESTS VALUES (DEFAULT, ${req.body.category}, \'${userName}\', \'${req.body.test_name}\', 1)`
+        ).then(result=>{
+            return res.status(201).json({status: "1"})
+        }).catch((error)=> {
+            return res.status(201).json({status: "2"})
 
-    })
-
+        })
+    }
 
 });
 
@@ -93,7 +97,7 @@ router.post('/registerQuestion', async function(req, res, next) {
             })
         })
     }).catch((error)=> {
-        console.log(error)
+
         return res.status(201).json({status: "2"})
 
     })
