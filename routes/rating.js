@@ -26,6 +26,7 @@ router.post('/allInfo', async function(req, res, next) {
         ON A.TEST_ID = B.TEST_ID
         JOIN QUESTIONS C
         ON B.TEST_ID = C.TEST_ID
+        WHERE A.TEST_PASSING_STATUS_ID = 3
         GROUP BY A.TEST_PASSING_ID, A.TEST_ID, A.USER_ID, A.CORRECT_ANSWER_COUNT
         ) D
         GROUP BY D.USER_ID
@@ -47,6 +48,7 @@ router.post('/allInfo', async function(req, res, next) {
             ON A.TEST_ID = B.TEST_ID
             JOIN QUESTIONS C
             ON B.TEST_ID = C.TEST_ID
+            WHERE A.TEST_PASSING_STATUS_ID = 3
             GROUP BY A.TEST_PASSING_ID, A.TEST_ID, A.USER_ID, A.CORRECT_ANSWER_COUNT
             ) D
             GROUP BY D.USER_ID
@@ -67,6 +69,7 @@ router.post('/allInfo', async function(req, res, next) {
                 ON A.TEST_ID = B.TEST_ID
                 JOIN QUESTIONS C
                 ON B.TEST_ID = C.TEST_ID
+                WHERE A.TEST_PASSING_STATUS_ID = 3
                 GROUP BY A.TEST_PASSING_ID, A.TEST_ID, A.USER_ID, A.CORRECT_ANSWER_COUNT
                 ) D
                 GROUP BY D.USER_ID
@@ -89,6 +92,7 @@ router.post('/allInfo', async function(req, res, next) {
                     ON A.TEST_ID = B.TEST_ID
                     JOIN QUESTIONS C
                     ON B.TEST_ID = C.TEST_ID
+                        WHERE A.TEST_PASSING_STATUS_ID = 3
                     GROUP BY A.TEST_PASSING_ID, A.TEST_ID, A.USER_ID, A.CORRECT_ANSWER_COUNT
                     ) D
                     GROUP BY D.USER_ID

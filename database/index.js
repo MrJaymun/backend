@@ -8,8 +8,8 @@ const sequelize = new Sequelize("coursework", "postgres", "12345", {
     }
 });
 
-/*
 
+/*
 sequelize.sync({force: true}).then(()=> {
     console.log("Успешно");
 })
@@ -26,12 +26,13 @@ const Question = require('./Question')(sequelize)
 const Test_Status = require('./Test_Status')(sequelize)
 const Answer = require('./Answer')(sequelize)
 const Test_Passing = require('./Test_Passing')(sequelize)
+const Test_Passing_Status = require('./Test_Passing_Status')(sequelize)
 
 User.belongsTo(User_Category, {foreignKey: 'user_category_id'})
 User_Category.hasMany(User, {foreignKey: 'user_category_id'})
 
-Test.belongsTo(User, {foreignKey: 'test_author_name'})
-User.hasMany(Test, {foreignKey: 'login'})
+Test.belongsTo(User, {foreignKey: 'user_id'})
+User.hasMany(Test, {foreignKey: 'user_id'})
 
 Test.belongsTo(Test_Category, {foreignKey: 'test_category_id'})
 Test_Category.hasMany(Test, {foreignKey: 'test_category_id'})
@@ -46,9 +47,13 @@ Answer.belongsTo(Question, {foreignKey: 'question_id'})
 Question.hasMany(Answer, {foreignKey: 'question_id'})
 
 Test_Passing.belongsTo(User, {foreignKey: 'user_id'})
-User.hasMany(Test_Passing, {foreignKey: 'login'})
+User.hasMany(Test_Passing, {foreignKey: 'user_id'})
+
 Test_Passing.belongsTo(Test, {foreignKey: 'test_id'})
 Test.hasMany(Test_Passing, {foreignKey: 'test_id'})
+
+Test_Passing.belongsTo(Test_Passing_Status, {foreignKey: 'test_passing_status_id'})
+Test_Passing_Status.hasMany(Test_Passing, {foreignKey: 'test_passing_status_id'})
 
 module.exports = {
     sequelize,
@@ -57,5 +62,6 @@ module.exports = {
     test: Test,
     test_category: Test_Category,
     answer: Answer,
-    test_passing: Test_Passing
+    test_passing: Test_Passing,
+    test_passing_status: Test_Passing_Status
 }

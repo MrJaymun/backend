@@ -13,6 +13,7 @@ const {secret} = require('../routes/secretKey')
 
 router.post('/first-level', async function(req, res, next) {
         const token = req.headers.access?.split(' ')[1]
+
         if(!token){
             return res.status(201).json({status: "1", result: false})
         }
@@ -31,6 +32,7 @@ router.post('/first-level', async function(req, res, next) {
 router.post('/second-level', async function(req, res, next) {
 
     const token = req.headers.access?.split(' ')[1]
+    console.log(token)
     if(!token){
         return res.status(201).json({status: "1", result: false})
     }
@@ -85,7 +87,34 @@ router.post('/questionsToPass', async function(req, res, next) {
 
 });
 
-router.post('/sendTest', async function(req, res, next) {
+
+
+
+router.post('/beginTest', async function(req, res, next) {
+    const token = req.headers.access.split(' ')[1]
+
+    if(!token){
+        console.log('Я не  жив')
+        return res.status(201).json({status: "2"})
+    }
+    else{
+        console.log('Я жив')
+        const {id: id} = jwt.verify(token, secret)
+
+        await dataBase.sequelize.query(`UPDATE TEST_PASSINGS SET TEST_PASSING_STATUS_ID = 2, FINISH_TIME = now() WHERE USER_ID = \'${id}\' AND TEST_PASSING_STATUS_ID = 1`)
+            await dataBase.sequelize.query(`INSERT INTO TEST_PASSINGS VALUES(DEFAULT, ${req.body.id}, \'${id}\', null, now(), null, 1)`
+            ).then(finish=>{
+                return res.status(201).json({status: "1", result: result[0]})
+            }).catch((error)=> {
+            return res.status(201).json({status: "2"})
+        })
+    }
+
+
+
+});
+
+router.post('/finishTest', async function(req, res, next) {
     const token = req.headers.access.split(' ')[1]
     if(!token){
         return res.status(201).json({status: "2"})
@@ -95,10 +124,12 @@ router.post('/sendTest', async function(req, res, next) {
         await dataBase.sequelize.query(`SELECT COUNT(*) AS COUNTER FROM ANSWERS WHERE IS_CORRECT = TRUE AND ANSWER_ID IN (${req.body.items})`
         ).then(async result=>{
 
-            await dataBase.sequelize.query(`INSERT INTO TEST_PASSINGS VALUES(DEFAULT, ${req.body.id}, \'${id}\', ${result[0][0].counter}, null )`
+            await dataBase.sequelize.query(`UPDATE TEST_PASSINGS SET TEST_PASSING_STATUS_ID = 3, FINISH_TIME = now(), CORRECT_ANSWER_COUNT = ${result[0][0].counter} WHERE USER_ID = \'${id}\' AND TEST_PASSING_STATUS_ID = 1`
             ).then(finish=>{
                 return res.status(201).json({status: "1", result: result[0]})
             })
+
+
 
         }).catch((error)=> {
             return res.status(201).json({status: "2"})
@@ -108,6 +139,22 @@ router.post('/sendTest', async function(req, res, next) {
 
 
 });
+
+
+router.post('/failTest', async function(req, res, next) {
+    const token = req.headers.access.split(' ')[1]
+    if(!token){
+        return res.status(201).json({status: "2"})
+    }
+    else{
+        const {id: id} = jwt.verify(token, secret)
+        await dataBase.sequelize.query(`UPDATE TEST_PASSINGS SET TEST_PASSING_STATUS_ID = 2, FINISH_TIME = now() WHERE USER_ID = \'${id}\' AND TEST_PASSING_STATUS_ID = 1`)
+    }
+
+
+
+});
+
 
 module.exports = router;
 

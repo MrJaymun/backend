@@ -14,7 +14,7 @@ module.exports = function (sequelize){
             primaryKey: false,
             allowNull: false
         },
-        test_author_name:{
+        user_id:{
             type: Sequelize.STRING(20),
             primaryKey: false,
             allowNull: false

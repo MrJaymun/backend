@@ -14,14 +14,16 @@ router.post('/loginInfo', async function(req, res, next) {
         return res.status(201).json({status: "2"})
     }
     else{
-        const {id: id} = jwt.verify(token, secret)
+
+        const {id: id} = await jwt.verify(token, secret)
+
         return res.status(201).json({status: "1", result: id})
     }
 
 });
 
 router.post('/createCount', async function(req, res, next) {
-    await dataBase.sequelize.query(`SELECT COUNT(*) as counter FROM TESTS WHERE test_author_name = \'${req.body.login}\'`
+    await dataBase.sequelize.query(`SELECT COUNT(*) as counter FROM TESTS WHERE USER_ID = \'${req.body.login}\'`
     ).then(result=>{
                 return res.status(201).json({ status: "1", result: result[0][0].counter})
             }).catch((error)=> {
@@ -31,9 +33,25 @@ router.post('/createCount', async function(req, res, next) {
 });
 
 router.post('/passedCount', async function(req, res, next) {
-    await dataBase.sequelize.query(`SELECT COUNT(*) as counter FROM (SELECT DISTINCT test_id FROM TEST_PASSINGS where user_id = \'${req.body.login}\') a`
+    await dataBase.sequelize.query(`SELECT COUNT(*) AS COUNTER, TEST_PASSING_STATUS_ID FROM TEST_PASSINGS WHERE USER_ID = \'${req.body.login}\' AND TEST_PASSING_STATUS_ID IN(2, 3)
+                                    GROUP BY TEST_PASSING_STATUS_ID`
     ).then(result=>{
-        return res.status(201).json({ status: "1", result: result[0][0].counter})
+        console.log(result[0])
+        return res.status(201).json({ status: "1", counter: result[0]})
+    }).catch((error)=> {
+        return res.status(201).json({status: "2", message: "Соединение с БД потеряно"})
+
+    })
+});
+
+router.post('/mediumTime', async function(req, res, next) {
+
+    await dataBase.sequelize.query(`
+                SELECT AVG(FINISH_TIME::timestamp(0) - BEGIN_TIME::timestamp(0))::varchar AS TIME FROM TEST_PASSINGS WHERE USER_ID = \'${req.body.login}\' AND TEST_PASSING_STATUS_ID = 3
+        `
+    ).then(result=>{
+
+        return res.status(201).json({ status: "1", time: result[0]})
     }).catch((error)=> {
         return res.status(201).json({status: "2", message: "Соединение с БД потеряно"})
 
@@ -41,11 +59,11 @@ router.post('/passedCount', async function(req, res, next) {
 });
 
 router.post('/newPassword', async function(req, res, next) {
-    await dataBase.sequelize.query(`SELECT COUNT(*) as counter FROM USERS WHERE login = \'${req.body.login}\' AND password = \'${req.body.old}\'`
+    await dataBase.sequelize.query(`SELECT COUNT(*) as counter FROM USERS WHERE USER_ID = \'${req.body.login}\' AND password = \'${req.body.old}\'`
     ).then(async result=>{
         if(result[0][0].counter === '1'){
-            console.log('Норм')
-            await dataBase.sequelize.query(`UPDATE USERS SET PASSWORD = \'${req.body.new}\' WHERE LOGIN =\'${req.body.login}\'`).then(a => {
+
+            await dataBase.sequelize.query(`UPDATE USERS SET PASSWORD = \'${req.body.new}\' WHERE USER_ID =\'${req.body.login}\'`).then(a => {
                 return res.status(201).json({ status: "1"
             })
         })
@@ -147,7 +165,7 @@ router.post('/fullMyTest', async function(req, res, next) {
     await dataBase.sequelize.query(`SELECT A.TEST_NAME, B.TEST_STATUS_NAME FROM TESTS A
         JOIN TEST_STATUSES B
         ON A.TEST_STATUS_ID = B.TEST_STATUS_ID
-        WHERE A.TEST_AUTHOR_NAME =   \'${id}\'`
+        WHERE A.USER_ID =   \'${id}\'`
     ).then(result=>{
         return res.status(201).json({status: "1", result: result[0]})
     }).catch((error)=> {

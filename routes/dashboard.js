@@ -7,8 +7,8 @@ const {QueryTypes} = require("sequelize");
 
 router.post('/allInfo', async function(req, res, next) {
 
-    await dataBase.sequelize.query(`SELECT TEST_AUTHOR_NAME, COUNT(*) AS COUNTER FROM TESTS
-           GROUP BY TEST_AUTHOR_NAME`
+    await dataBase.sequelize.query(`SELECT USER_ID, COUNT(*) AS COUNTER FROM TESTS
+           GROUP BY USER_ID`
     ).then(async users=>{
         await dataBase.sequelize.query(`SELECT B.TEST_CATEGORY_NAME, COUNT(A.*) AS COUNTER FROM TESTS A
             JOIN TEST_CATEGORIES B

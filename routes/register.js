@@ -9,7 +9,7 @@ const {QueryTypes} = require("sequelize");
 
 
 router.post('/', async function(req, res, next) {
-    await dataBase.sequelize.query(`SELECT COUNT(*) AS counter FROM USERS WHERE users.login = \'${req.body.login}\' or users.email = \'${req.body.email}\'`
+    await dataBase.sequelize.query(`SELECT COUNT(*) AS counter FROM USERS WHERE users.USER_ID = \'${req.body.login}\' or users.email = \'${req.body.email}\'`
     ).then(result=>{
         const isOk = result[0][0].counter;
         if(isOk === '0'){

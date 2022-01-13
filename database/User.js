@@ -2,7 +2,7 @@ const Sequelize = require("sequelize")
 
 module.exports = function (sequelize){
     return sequelize.define('user', {
-        login:{
+        user_id:{
             type: Sequelize.STRING(20),
             primaryKey: true,
             allowNull: false,
