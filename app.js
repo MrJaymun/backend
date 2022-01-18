@@ -13,6 +13,7 @@ var testCreateRouter = require('./routes/createTest');
 var personalRouter = require('./routes/personal');
 var dashboardRouter = require('./routes/dashboard');
 var ratingRouter = require('./routes/rating');
+var logRouter = require('./routes/log');
 
 var dataBase = require('./database');
 
@@ -38,8 +39,9 @@ app.use('/register', regRouter);
 app.use('/main', mainRouter);
 app.use('/addTest', testCreateRouter);
 app.use('/personal', personalRouter);
-app.use('/dashboard', dashboardRouter)
-app.use('/rating', ratingRouter)
+app.use('/dashboard', dashboardRouter);
+app.use('/rating', ratingRouter);
+app.use('/log', logRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
