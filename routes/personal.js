@@ -33,17 +33,23 @@ router.post('/createCount', async function(req, res, next) {
 });
 
 router.post('/passedCount', async function(req, res, next) {
-    await dataBase.sequelize.query(`SELECT COUNT(*) AS COUNTER, TEST_PASSING_STATUS_ID FROM TEST_PASSINGS WHERE USER_ID = \'${req.body.login}\' AND TEST_PASSING_STATUS_ID IN(2, 3)
-                                    GROUP BY TEST_PASSING_STATUS_ID`
-    ).then(result=>{
-        console.log(result[0])
-        return res.status(201).json({ status: "1", counter: result[0]})
+    await dataBase.sequelize.query(` SELECT COUNT(*) FROM TEST_PASSINGS WHERE USER_ID = \'${req.body.login}\' AND TEST_PASSING_STATUS_ID = 2`
+    ).then(async result=>{
+        await dataBase.sequelize.query(` SELECT COUNT(*) FROM TEST_PASSINGS WHERE USER_ID = \'${req.body.login}\' AND TEST_PASSING_STATUS_ID = 3`)
+            .then(resultCr=> {
+
+                return res.status(201).json({ status: "1", left: result[0], finished: resultCr[0]})
+
+
+            })
+
+
     }).catch((error)=> {
         return res.status(201).json({status: "2", message: "Соединение с БД потеряно"})
 
     })
 });
-
+// \'${req.body.login}\'
 router.post('/mediumTime', async function(req, res, next) {
 
     await dataBase.sequelize.query(`
